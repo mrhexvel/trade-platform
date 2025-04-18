@@ -42,4 +42,9 @@ export class TokenService {
     });
     return token;
   }
+
+  async removeToken(refreshToken: string) {
+    const token = await this.tokenModel.deleteOne({ refreshToken });
+    return token;
+  }
 }
