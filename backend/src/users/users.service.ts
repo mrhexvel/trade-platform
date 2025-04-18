@@ -22,15 +22,23 @@ export class UsersService {
       email,
     });
 
+    if (!user) {
+      throw new Error("User not found");
+    }
+
     return user;
   }
 
-  async getUserById(id: string) {
+  async getUserById(id: string): Promise<UserDocument> {
     const user = await this.userModel
       .findOne({
         _id: id,
       })
       .select("-password");
+
+    if (!user) {
+      throw new Error("User not found");
+    }
 
     return user;
   }

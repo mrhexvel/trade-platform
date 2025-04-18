@@ -17,7 +17,7 @@ import { v4 as uuid } from "uuid";
 export class AuthService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
-    private readonly userService: UsersService,
+    private userService: UsersService,
     private tokenService: TokenService
   ) {}
 
@@ -72,5 +72,16 @@ export class AuthService {
     if (!refreshToken) {
       throw new UnauthorizedException();
     }
+
+    const userData = this.tokenService.validateAuthToken(refreshToken);
+    const existsToken = await this.tokenService.checkToken(refreshToken);
+
+    if (!userData || !existsToken) {
+      throw new UnauthorizedException();
+    }
+
+    const user = await this.userService.getUserById(userData.id);
+    const data = await this.userService.generateResponseWithToken(user);
+    return data;
   }
 }
